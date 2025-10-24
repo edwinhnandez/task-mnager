@@ -17,6 +17,16 @@ backend/*.tmp
 backend/*.swp
 
 # Frontend
+frontend/node_modules/
 frontend/config.js
 frontend/.DS_Store
 frontend/*.log
+frontend/coverage/
+
+# Test coverage
+coverage/
+*.lcov
+.nyc_output/
+
+# Test artifacts
+*.test.js.snap

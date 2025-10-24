@@ -3,7 +3,6 @@ const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -22,6 +21,30 @@ let tasks = [
     status: 'completed'
   }
 ];
+
+// Helper function to reset tasks (useful for testing)
+const resetTasks = () => {
+  tasks = [
+    {
+      id: '1',
+      title: 'Sample Task 1',
+      status: 'pending'
+    },
+    {
+      id: '2',
+      title: 'Sample Task 2',
+      status: 'completed'
+    }
+  ];
+};
+
+// Helper function to get tasks (for testing)
+const getTasks = () => tasks;
+
+// Helper function to set tasks (for testing)
+const setTasks = (newTasks) => {
+  tasks = newTasks;
+};
 
 // Routes
 
@@ -126,6 +149,13 @@ app.delete('/tasks/:id', (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Server is healthy'
+  });
 });
+
+module.exports = { app, resetTasks, getTasks, setTasks };
+

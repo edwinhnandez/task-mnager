@@ -1,0 +1,23 @@
+{
+  "name": "task-manager-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Task Manager Application",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:ci": "vitest run --coverage --reporter=verbose"
+  },
+  "devDependencies": {
+    "@vitest/ui": "^1.0.4",
+    "@vue/test-utils": "^2.4.3",
+    "happy-dom": "^12.10.3",
+    "vitest": "^1.0.4",
+    "@vitest/coverage-v8": "^1.0.4"
+  },
+  "dependencies": {
+    "vue": "^3.4.0"
+  }
+}
+

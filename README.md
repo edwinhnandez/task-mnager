@@ -173,29 +173,78 @@ curl -X DELETE http://localhost:3000/tasks/<task-id>
 
 ---
 
+## Testing
+
+This project includes comprehensive unit and integration tests.
+
+### Running Tests
+
+**Backend Tests:**
+```bash
+cd backend
+npm install  # If not already installed
+npm test     # Run all tests with coverage
+```
+
+**Frontend Tests:**
+```bash
+cd frontend
+npm install  # If not already installed
+npm test     # Run all tests with coverage
+```
+
+### Test Coverage
+
+- Backend: 100% coverage (statements, branches, functions, lines)
+- Frontend: 100% coverage (statements, branches, functions, lines)
+- 60+ comprehensive tests across all layers
+
+---
+
 ## Project Structure
 
 ```
 task-manager/
 ├── backend/
+│   ├── src/
+│   │   ├── app.js              # Express app (testable)
+│   │   └── server.js           # Server entry point
+│   ├── __tests__/
+│   │   └── app.test.js         # API tests
 │   ├── node_modules/
+│   ├── coverage/               # Test coverage reports
 │   ├── .dockerignore
 │   ├── Dockerfile
 │   ├── package.json
-│   ├── package-lock.json
-│   ├── README.md
-│   └── server.js
+│   └── package-lock.json
 ├── frontend/
+│   ├── src/
+│   │   ├── services/
+│   │   │   └── taskService.js  # API service layer
+│   │   └── composables/
+│   │       └── useTasks.js     # Business logic
+│   ├── __tests__/
+│   │   ├── services/
+│   │   │   └── taskService.test.js
+│   │   └── composables/
+│   │       └── useTasks.test.js
+│   ├── node_modules/
+│   ├── coverage/               # Test coverage reports
 │   ├── .dockerignore
 │   ├── Dockerfile
 │   ├── nginx.conf
-│   ├── app.js
-│   ├── config.js
+│   ├── vitest.config.js        # Test configuration
+│   ├── test-setup.js           # Test setup
+│   ├── package.json
+│   ├── app.js                  # Vue app (CDN)
+│   ├── config.js               # API config
+│   ├── config.example.js       # Config template
 │   ├── index.html
 │   └── style.css
 ├── .dockerignore
+├── .gitignore
 ├── docker-compose.yml
-└── README.md
+├── README.md              # Testing documentation
 ```
 
 ---
@@ -280,7 +329,7 @@ If I had more time, I would add:
 ### Technical Improvements
 - **Database integration**: PostgreSQL or MongoDB for data persistence
 - **Authentication**: User accounts and login system
-- **Unit tests**: Jest/Mocha for backend, Vitest for frontend
+- **E2E tests**: Playwright or Cypress for end-to-end testing
 - **Progressive Web App**: Offline functionality
 - **Internationalization**: Multi-language support
 - **Analytics**: Track usage patterns
