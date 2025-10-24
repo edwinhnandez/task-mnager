@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="config.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div id="app" class="container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Task Manager</h1>
+            <p class="text-gray-600">Organize your tasks efficiently</p>
+        </header>
+
+        <!-- Add Task Form -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <form @submit.prevent="addTask" class="flex flex-col sm:flex-row gap-4">
+                <input 
+                    v-model="newTaskTitle"
+                    type="text" 
+                    placeholder="What needs to be done?" 
+                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                >
+                <button 
+                    type="submit"
+                    class="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    :disabled="isLoading"
+                >
+                    <span v-if="!isLoading">Add Task</span>
+                    <span v-else>Adding...</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Task List -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Loading State -->
+            <div v-if="isLoading && tasks.length === 0" class="p-8 text-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                <p class="text-gray-500 mt-2">Loading tasks...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div v-else-if="tasks.length === 0" class="p-8 text-center">
+                <i class="fas fa-clipboard-list text-gray-300 text-4xl mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">No tasks yet</h3>
+                <p class="text-gray-500">Add your first task using the form above!</p>
+            </div>
+
+            <!-- Task List -->
+            <div v-else class="divide-y divide-gray-200">
+                <div 
+                    v-for="task in tasks" 
+                    :key="task.id"
+                    class="p-4 hover:bg-gray-50 transition duration-200"
+                    :class="{
+                        'bg-green-50': task.status === 'completed',
+                        'opacity-75': task.status === 'completed'
+                    }"
+                >
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <!-- Status Indicator -->
+                            <button 
+                                @click="toggleTaskStatus(task)"
+                                class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition duration-200"
+                                :class="{
+                                    'border-green-500 bg-green-500 text-white': task.status === 'completed',
+                                    'border-gray-300 hover:border-green-500': task.status === 'pending'
+                                }"
+                            >
+                                <i v-if="task.status === 'completed'" class="fas fa-check text-xs"></i>
+                            </button>
+                            
+                            <!-- Task Title -->
+                            <span 
+                                class="text-lg"
+                                :class="{
+                                    'line-through text-gray-500': task.status === 'completed',
+                                    'text-gray-800': task.status === 'pending'
+                                }"
+                            >
+                                {{ task.title }}
+                            </span>
+                        </div>
+
+                        <!-- Delete Button -->
+                        <button 
+                            @click="deleteTask(task.id)"
+                            class="text-red-400 hover:text-red-600 transition duration-200 p-2 rounded-full hover:bg-red-50"
+                            title="Delete task"
+                        >
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+
+                    <!-- Task Meta -->
+                    <div class="mt-2 flex items-center space-x-4 text-sm text-gray-500 ml-9">
+                        <span class="flex items-center space-x-1">
+                            <i class="fas fa-calendar"></i>
+                            <span>Created just now</span>
+                        </span>
+                        <span 
+                            class="px-2 py-1 rounded-full text-xs font-medium"
+                            :class="{
+                                'bg-green-100 text-green-800': task.status === 'completed',
+                                'bg-yellow-100 text-yellow-800': task.status === 'pending'
+                            }"
+                        >
+                            {{ task.status === 'completed' ? 'Completed' : 'Pending' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div v-if="tasks.length > 0" class="mt-4 text-center text-gray-600">
+            <p>{{ completedTasksCount }} of {{ tasks.length }} tasks completed</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

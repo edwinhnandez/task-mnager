@@ -1,0 +1,22 @@
+# Node.js
+backend/node_modules/
+backend/npm-debug.log*
+backend/.DS_Store
+backend/.env
+backend/build/
+backend/dist/
+backend/coverage/
+
+# Editor/IDE specific files
+backend/.vscode/
+backend/.idea/
+
+# Other common ignored files
+backend/*.log
+backend/*.tmp
+backend/*.swp
+
+# Frontend
+frontend/config.js
+frontend/.DS_Store
+frontend/*.log
