@@ -66,20 +66,18 @@
                 >
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                            <!-- Status Indicator -->
-                            <button 
-                                @click="toggleTaskStatus(task)"
-                                class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition duration-200"
-                                :class="{
-                                    'border-green-500 bg-green-500 text-white': task.status === 'completed',
-                                    'border-gray-300 hover:border-green-500': task.status === 'pending'
-                                }"
+                            <select 
+                                v-model="task.status"
+                                @change="toggleTaskStatus(task)"
+                                class="bg-transparent border-none text-gray-600 focus:outline-none cursor-pointer"
+                                title="Change status"
                             >
-                                <i v-if="task.status === 'completed'" class="fas fa-check text-xs"></i>
-                            </button>
-                            
+                                <option value="pending">Pending</option>
+                                <option value="progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>                            
                             <!-- Task Title -->
-                            <span 
+                            <span v-if="!task.isEditing"
                                 class="text-lg"
                                 :class="{
                                     'line-through text-gray-500': task.status === 'completed',
@@ -88,6 +86,25 @@
                             >
                                 {{ task.title }}
                             </span>
+                            <div v-else>
+                                <input 
+                                    v-model="task.editTitle"
+                                    type="text"
+                                    class="px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                                <button 
+                                    @click="saveTaskEdit(task)"
+                                    class="ml-2 px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200"
+                                >
+                                    Save
+                                </button>
+                                <button 
+                                    @click="cancelTaskEdit(task)"
+                                    class="ml-2 px-3 py-1 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Delete Button -->
@@ -98,23 +115,22 @@
                         >
                             <i class="fas fa-trash"></i>
                         </button>
+                        <button 
+                            @click="editTask(task.id)"
+                            class="text-red-400 hover:text-red-600 transition duration-200 p-2 rounded-full hover:bg-red-50"
+                            title="Delete task"
+                        >
+                            <i class="fas fa-pencil"></i>
+                        </button>
                     </div>
 
                     <!-- Task Meta -->
                     <div class="mt-2 flex items-center space-x-4 text-sm text-gray-500 ml-9">
                         <span class="flex items-center space-x-1">
                             <i class="fas fa-calendar"></i>
-                            <span>Created just now</span>
+                            <span>{{ task.dateCreated }}</span>
                         </span>
-                        <span 
-                            class="px-2 py-1 rounded-full text-xs font-medium"
-                            :class="{
-                                'bg-green-100 text-green-800': task.status === 'completed',
-                                'bg-yellow-100 text-yellow-800': task.status === 'pending'
-                            }"
-                        >
-                            {{ task.status === 'completed' ? 'Completed' : 'Pending' }}
-                        </span>
+                        <span>{{ task.status }}</span>
                     </div>
                 </div>
             </div>

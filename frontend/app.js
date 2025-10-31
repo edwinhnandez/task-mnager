@@ -74,27 +74,55 @@ createApp({
         },
 
         async toggleTaskStatus(task) {
-            const newStatus = task.status === 'completed' ? 'pending' : 'completed';
-            
+            const newStatus = task.status;
+            console.log('Toggling status to:', newStatus);
             try {
-                if (newStatus === 'completed') {
-                    const response = await fetch(`${API_BASE_URL}/tasks/${task.id}/complete`, {
+                // if (newStatus === 'completed' || newStatus === 'progress' || newStatus === 'pending') {
+                    const response = await fetch(`${API_BASE_URL}/tasks/${task.id}/${newStatus}`, {
                         method: 'PATCH'
                     });
                     const result = await response.json();
                     
                     if (result.success) {
-                        task.status = 'completed';
+                        task.status = newStatus;
                     }
-                } else {
-                    // For simplicity, we'll just toggle locally for pending
-                    // In a real app, you might want a PATCH /tasks/:id endpoint
-                    task.status = 'pending';
-                }
+                // }
             } catch (error) {
                 console.error('Error updating task:', error);
                 this.error = 'Failed to update task status';
             }
+        },
+        async editTask(taskId) {
+            const task = this.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            task.isEditing = true;
+        },
+
+        async cancelTaskEdit(task) {
+            task.isEditing = false;
+        },
+
+        async saveTaskEdit(task) {
+            const newTitle = task.editTitle;
+        
+            const response = await fetch(`${API_BASE_URL}/tasks/${task.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: newTitle
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                task.title = newTitle;
+                task.isEditing = false;
+            } else {
+                this.error = result.message || 'Failed to edit task';
+            }            
         },
 
         async deleteTask(taskId) {

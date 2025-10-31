@@ -8,17 +8,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const showDate = () => {
+  let date = new Date();
+  return date.getDay() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+}
+
 // In-memory storage for tasks
 let tasks = [
   {
     id: '1',
     title: 'Sample Task 1',
-    status: 'pending'
+    status: 'pending',
+    dateCreated: showDate()
   },
   {
     id: '2',
     title: 'Sample Task 2',
-    status: 'completed'
+    status: 'completed',
+    dateCreated: showDate()
   }
 ];
 
@@ -28,12 +35,14 @@ const resetTasks = () => {
     {
       id: '1',
       title: 'Sample Task 1',
-      status: 'pending'
+      status: 'pending',
+      dateCreated: showDate()
     },
     {
       id: '2',
       title: 'Sample Task 2',
-      status: 'completed'
+      status: 'completed',
+      dateCreated: showDate()
     }
   ];
 };
@@ -78,7 +87,8 @@ app.post('/tasks', (req, res) => {
     const newTask = {
       id: uuidv4(),
       title: title.trim(),
-      status: 'pending'
+      status: 'pending',
+      dateCreated: new Date().toISOString()
     };
 
     tasks.push(newTask);
@@ -96,9 +106,9 @@ app.post('/tasks', (req, res) => {
 });
 
 // PATCH /tasks/:id/complete - Mark task as completed (Bonus feature)
-app.patch('/tasks/:id/complete', (req, res) => {
+app.patch('/tasks/:id/:status', (req, res) => {
   try {
-    const { id } = req.params;
+    const { id, status } = req.params;
     const taskIndex = tasks.findIndex(task => task.id === id);
 
     if (taskIndex === -1) {
@@ -108,7 +118,41 @@ app.patch('/tasks/:id/complete', (req, res) => {
       });
     }
 
-    tasks[taskIndex].status = 'completed';
+    tasks[taskIndex].status = status;
+
+    res.json({
+      success: true,
+      data: tasks[taskIndex]
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error updating task'
+    });
+  }
+});
+
+app.put('/tasks/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title } = req.body;
+    const taskIndex = tasks.findIndex(task => task.id === id);
+
+    if (taskIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Task not found'
+      });
+    }
+
+    if (!title || title.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Title is required'
+      });
+    }
+
+    tasks[taskIndex].title = title.trim();
 
     res.json({
       success: true,
